@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "ViewInIframe";
+}
+
+<h2>ViewInIframe</h2>
+<div id="listResult"></div>
+<button id="btnGet">Get</button>
+@section scripts { 
+    <script>
+        var refreshInterval;
+        $(function () {
+            $("#btnGet").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetList", "home")',
+                    cache: false,
+                    success: function (result) {
+                        $('#listResult').append($('<div/>').html(
+                            result.startTime + ' | ' + result.endTime
+                        ));
+                    }
+                });
+            }); 
+        });
+         
+    </script>
+}

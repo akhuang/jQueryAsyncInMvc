@@ -1,0 +1,61 @@
+﻿@model MvcApplication3.Models.LoginModel
+@{
+    ViewBag.Title = "My Todo List";
+}
+@functions{
+    public string GetAntiForgeryToken()
+    {
+        string cookieToken, formToken;
+        AntiForgery.GetTokens(null, out cookieToken, out formToken);
+        return cookieToken + ":" + formToken;
+    }
+}
+
+<div id="result"></div>
+<hr />
+<hr />
+<button id="btnGet">Get</button>
+<button id="btnStart">Start</button>
+<button id="btnClear">Clear</button>
+<div id="listResult"></div>
+
+<iframe src="@Url.Action("ViewInIframe","Home")" width="500px" height="300px;"></iframe>
+@section scripts {  
+    <script>
+        var refreshInterval;
+        $(function () {
+            $("#btnGet").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetList", "home")',
+                    cache: false,
+                    success: function (result) {
+                        $('#listResult').append($('<div/>').html(
+                            result.startTime + ' | ' + result.endTime
+                        ));
+                    }
+                });
+            });
+
+            $("#btnStart").click(function () {
+                refreshInterval = window.setInterval("StartInterval()", 3 * 1000);
+            });
+            $("#btnClear").click(function () {
+                clearInterval(refreshInterval);
+            });
+        });
+
+        function StartInterval() {
+            $.ajax({
+                url: '@Url.Action("Ajax", "Home")',
+                cache: false,
+                success: function (result) {
+                    $('#result').append($('<div/>').html(
+                        result.startTime + ' | ' + result.endTime
+                    ));
+                }
+            });
+        }
+
+    </script>
+}
